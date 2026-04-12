@@ -32,10 +32,10 @@
                     <legend>Add a new GeoTag</legend>
 
                     <label for="tagging_latitude">Latitude:</label>
-                    <input id="tagging_latitude" name="latitude" value="49.01379" readonly></input>
+                    <input type="number" id="tagging_latitude" name="latitude" value="49.01379" readonly></input>
                     
                     <label for="tagging_longitude">Longitude:</label> 
-                    <input id="tagging_longitude" name="longitude" value="8.390071" readonly></input>
+                    <input type="number" id="tagging_longitude" name="longitude" value="8.390071" readonly></input>
 
                     <label for="tagging_name">Name:</label>
                     <input
@@ -67,7 +67,20 @@
 
             <!-- ############### VS1Lab 1a Form 2 Start -->
             <form class="discovery__search" id="discoveryFilterForm" action="/discovery" method="post">
+                <fieldset>
+                    <legend>Search</legend>
+                    
+                    <label for="discovery_searchterm">Search term or keywords:</label> 
+                    <input type="text" id="discovery_searchterm" name="searchterm" placeholder="e.g. Berlin"> </input>
 
+
+                    <input type="hidden" id="discovery_latitude" name="latitude" value="49.01379" readonly></input>
+                    
+                    <input type="hidden" id="discovery_longitude" name="longitude" value="8.390071" readonly></input>
+
+                    <input type="submit" id="discovery_submit" value="Search"> </input>
+
+                </fieldset>
                 <!-- ... your code here ... -->
 
             </form>
