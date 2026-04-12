@@ -30,11 +30,12 @@
                 <!-- ... your code here ... -->
                 <fieldset>
                     <legend>Add a new GeoTag</legend>
-                    <label for="latitude">Latitude:</label>
-                    <input id="latitude" value="49.01379" readonly></input>
+
+                    <label for="tagging_latitude">Latitude:</label>
+                    <input id="tagging_latitude" name="latitude" value="49.01379" readonly></input>
                     
-                    <label for="longitude">Longitude:</label> 
-                    <input id="longitude" value="8.390071" readonly></input>
+                    <label for="tagging_longitude">Longitude:</label> 
+                    <input id="tagging_longitude" name="longitude" value="8.390071" readonly></input>
 
                     <label for="tagging_name">Name:</label>
                     <input
@@ -42,11 +43,12 @@
                     id="tagging_name" 
                     pattern="[A-Za-z]{1,10}"
                     placeholder="e.g. Central Berlin" 
+                    name="name"
                     required>
                     </input>
 
                     <label for="tagging_hashtag">Hashtag:</label>
-                    <input type="text" id="tagging_hashtag" placeholder="e.g. #ber" pattern="#[A-Za-z]{0,10}"></input>
+                    <input type="text" id="tagging_hashtag" name="hashtag" placeholder="e.g. #ber" pattern="#[A-Za-z]{0,10}"></input>
 
                     <input type="submit" value="Add Tag"> </input>
 
