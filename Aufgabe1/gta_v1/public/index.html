@@ -31,13 +31,15 @@
                 <fieldset>
 
                     <legend>Add a new Tag</legend>
-                    <div><label for="longitude">Longitude:</label><br>
-                        <input type="text" id="longitude" name="longitude" placeholder="automatically captured"
-                            readonly>
-                    </div>
 
                     <div><label for="latitude">Latitude:</label><br>
-                        <input type="text" id="latitude" name="latitude" placeholder="automatically captured" readonly>
+                        <input type="text" id="latitude" name="latitude" placeholder="automatically captured"
+                            value="49.01379" readonly>
+                    </div>
+
+                    <div><label for="longitude">Longitude:</label><br>
+                        <input type="text" id="longitude" name="longitude" placeholder="automatically captured"
+                            value="8.390071" readonly>
                     </div>
 
                     <div><label for="name">Name:</label><br>
@@ -63,14 +65,6 @@
             <!-- ############### VS1Lab 1a Form 2 Start -->
             <form class="discovery__search" id="discoveryFilterForm" action="/discovery" method="post">
                 <!-- ... your code here ... -->
-                <fieldset>
-                    <legend>Search</legend>
-                    <div>
-                        <label for="search">Search term or keyword:</label>
-                        <input type="search" id="search" name="search" placeholder="e.g. Karlsruhe">
-                    </div>
-                </fieldset>
-
 
             </form>
             <!-- ############### VS1Lab 1a Form 2 End -->
