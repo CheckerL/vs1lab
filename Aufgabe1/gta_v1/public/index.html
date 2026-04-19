@@ -28,29 +28,7 @@
             <!-- ############### VS1Lab 1a Form 1 Start -->
             <form id="tag-form" action="/tagging" method="post">
 
-                <fieldset>
-
-                    <legend>Add a new GeoTag:</legend>
-
-                    <!-- latitude, longitude, name und hashtag als inputs-->
-                    <label for="latitude">Latitude:</label>
-                    <input type="text" id="latitude" name="latitude" value="49.01379" 
-                    readonly required>
-
-                    <label for="longitude">Longitude:</label>
-                    <input type="text" id="longitude" name="longitude" value="8.404435" 
-                    readonly required>
-
-                    <label for="name">Name:</label>
-                    <input type="text" placeholder="Castle" id="name" name="name" maxlength="10" required>
-
-                    <label for="hashtag">Hashtag:</label>
-                    <input type="text" placeholder="#sight (optional)" id="hashtag" name="hashtag" maxlength="11"
-                        pattern="^#?[A-Za-z0-9]{1,10}$">
-
-                    <button type="submit">Add Tag</button>
-
-                </fieldset>
+                <!-- ... your code here ... -->
 
             </form>
             <!-- ############### VS1Lab 1a Form 1 End -->
@@ -68,8 +46,7 @@
                     <legend>Search:</legend>
 
                     <label for="searchterm">Search term or keywords:</label>
-                    <input type="text" id="searchterm" name="searchterm" placeholder="e.g. Karlsruhe"
-                        size="30">
+                    <input type="text" id="searchterm" name="searchterm" placeholder="e.g. Karlsruhe">
 
                     <!-- versteckte Felder -->
                     <input type="hidden" id="latitude" name="latitude" value="49.01379">
