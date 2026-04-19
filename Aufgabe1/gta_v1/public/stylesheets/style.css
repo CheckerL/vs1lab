@@ -223,3 +223,49 @@ img.header__image {
 /* ### TODO ### Media Queries */
 
 /* ... your code here ... */
+
+@media screen and (max-width: 850px) {
+  .row {
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+
+    .col-1,
+    .col-2,
+    .col-3,
+    .col-4,
+    .col-5,
+    .col-6,
+    .col-7,
+    .col-8,
+    .col-9,
+    .col-10,
+    .col-11,
+    .col-12 {
+      width: 100%;
+    }
+
+    .main {
+      margin: 20px 0;
+      padding: 0 12px;
+    }
+
+    .header {
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+    }
+
+    .header__navigation {
+      width: 100%;
+    }
+
+    .discovery__taglist {
+      margin-bottom: 10px;
+    }
+
+    .footer {
+      text-align: center;
+    }
+}
