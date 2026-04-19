@@ -123,6 +123,9 @@ a {
   padding: 2%;
 }
 
+.header__title {
+  font-size: 2rem;
+}
 
 
 /* ### TODO ### Styles for Main Component */
@@ -130,7 +133,9 @@ a {
 /* ... your code here ... */
 .main {
   display: flex;
-  padding: 2%;
+  justify-content: space-between;
+  margin-top: 3%;
+  gap: clamp(11rem, 6vw, 15rem);
 }
 
 
@@ -138,25 +143,117 @@ a {
 
 /* ... your code here ... */
 
+.tagging{
+  display: flex;
+  flex-direction: column;
+  font-size: 1.4rem;
+  height: 100%;
+  
+}
+
 
 .tagging_component {
   display: flex;
   flex-direction:column;
-  font-size: 1.2rem;
-  padding: 2%
+  
+  padding: 4%;
+  margin: auto;
+} 
+
+
+
+label {
+  color: rgb(0 0 0 / 65%);
+  font-size: 1.1rem;
 }
+
+input {
+  height: 5vh;
+  font-size: 1.6rem;
+}
+
+legend {
+  font-weight: bold;
+}
+
+
 
 
 /* ### TODO ### Styles for Discovery component */
 
 /* ... your code here ... */
 
+.discovery {
+  display: flex;
+  flex-direction:column;
+  font-size: 1.4rem;
+}
+
+.discovery_component {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.discovery__results {
+  list-style: none;
+}
+
+.discovery__wrapper {
+  display: flex;
+  justify-content: space-between;
+  
+}
+.discovery__results li {
+  display: flex;
+  
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  background-color: lightgrey;
+  color: blue;
+  height: 7vh;
+  margin-top: 2%;
+}
+
+#map {
+  display: flex;
+  flex-direction: column;
+}
+
+#mapView {
+  width: 100%;
+}
+
 
 /* ### TODO ### Styles for Footer Component */
 
 /* ... your code here ... */
+.footer {
+  display: flex;
+  background-color: lightgray;
+  font-size: 1.3rem;
+  padding: 3%;
+}
 
 
 /* ### TODO ### Media Queries */
 
 /* ... your code here ... */
+
+@media screen and (max-width: 1600px) {
+  
+}
+@media screen and (max-width: 850px) {
+  .main {
+    flex-direction: column;
+  }
+
+  .main__tagging,
+  .main__discovery {
+    width: 100%;
+  }
+  .main__discovery {
+    flex-direction: column;
+  }
+}
