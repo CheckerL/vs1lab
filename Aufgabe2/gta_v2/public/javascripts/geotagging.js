@@ -148,13 +148,14 @@ function updateLocation() {
         document.getElementById("disc-longitude").value = helper.longitude;
 
 
-        var latitude = document.getElementById("tag-latitude").value;
-        var longitude = document.getElementById("tag-longitude").value;
+        /**const latitude = helper.latitude;
+        const longitude = helper.longitude;*/
 
-        mapManager = new MapManager();
-        mapManager.initMap(latitude, longitude);
-        mapManager.updateMarkers(latitude, longitude);
+        const mapManager = new MapManager();
+        mapManager.initMap(helper.latitude, helper.longitude);
+        mapManager.updateMarkers(helper.latitude, helper.longitude);
 
+        // Remove the static map and description elements from the page
         document.getElementById("mapView").remove();
         document.getElementById("mapDescription").remove();
     });  
