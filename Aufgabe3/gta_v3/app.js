@@ -23,6 +23,8 @@ const indexRouter = require('./routes/index');
 
 const app = express();
 
+app.use(express.static('public'));
+
 // Set ejs as the view engine.
 app.set('views', path.join(__dirname, 'views'));
 
