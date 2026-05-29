@@ -41,10 +41,10 @@
                     <legend>Add a new GeoTag</legend>
 
                     <label for="tag-latitude">Latitude:</label>
-                    <input type="text" id="tag-latitude" name="latitude" value="49.01379" readonly>
+                    <input type="text" id="tag-latitude" name="latitude" value="<%= latitude %>" readonly>
 
                     <label for="tag-longitude">Longitude:</label>
-                    <input type="text" id="tag-longitude" name="longitude" value="8.404435" readonly>
+                    <input type="text" id="tag-longitude" name="longitude" value="<%= longitude %>" readonly>
 
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" placeholder="Enter Name" required maxlength="10">
@@ -72,8 +72,8 @@
                     <input type="text" id="searchterm" name="searchterm" placeholder="e.g. Karlsruhe">
 
                     <!-- versteckte Felder -->
-                    <input type="hidden" id="disc-latitude" name="latitude" value="49.01379" readonly>
-                    <input type="hidden" id="disc-longitude" name="longitude" value="8.404435" readonly>
+                    <input type="hidden" id="disc-latitude" name="latitude" value="<%= latitude %>" readonly>
+                    <input type="hidden" id="disc-longitude" name="longitude" value="<%= longitude %>" readonly>
 
                     <button type="submit">Search</button>
                 </fieldset>
