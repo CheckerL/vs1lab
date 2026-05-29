@@ -42,7 +42,7 @@ class InMemoryGeoTagStore {
         );
     }
 
-    getNearbyGeoTags(latitude, longitude, radius = 0.01) {
+    getNearbyGeoTags(latitude, longitude, radius = 1) {
 
         latitude = parseFloat(latitude);
         longitude = parseFloat(longitude);
