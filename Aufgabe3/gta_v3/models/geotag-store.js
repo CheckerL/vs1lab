@@ -23,10 +23,58 @@
  * - The proximity constrained is the same as for 'getNearbyGeoTags'.
  * - Keyword matching should include partial matches from name or hashtag fields. 
  */
+
 class InMemoryGeoTagStore{
 
     // TODO: ... your code here ...
+    #store = [];
 
+    #geoTagExamples = GeoTagExamples.tagList;
+
+    constructor() {
+        addExampleGeoTags();
+    }
+
+    addExampleGeoTags() {
+        for(var geoTag of this.#geoTagExamples) {
+            this.addGeoTag(new GeoTag(geoTag[0], geoTag[1], geoTag[2], geoTag[3]));
+        }
+    }        
+
+    addGeoTag(geoTag) {
+        store.push(geoTag);
+    }
+    removeGeoTag(geoTagName) {
+        for(var geoTag of store) {
+            if(geoTag.name === geoTagName) {
+                store.splice(store.indexOf(geoTag), 1);
+            }
+        }
+    }
+
+    getNearbyGeoTags(location, radius) {
+        var nearbyGeoTags = [];
+        for(var geoTag of store) {
+            if(geoTag.latitude >= location.latitude - radius 
+                && geoTag.latitude <= location.latitude + radius
+                && geoTag.longitude >= location.longitude - radius
+                && geoTag.longitude <= location.longitude + radius) {
+                    nearbyGeoTags.push(geoTag);
+            }
+        }
+        return nearbyGeoTags;
+    }
+
+    searchNearbyGeoTags(location, radius, keyword) {
+        var nearbyGeoTags = this.getNearbyGeoTags(location, radius);
+        var matchingGeoTags = [];
+        for (var geoTag of nearbyGeoTags) {
+            if(geoTag.name.includes(keyword) || geoTag.hashtag.includes(keyword)) {
+                matchingGeoTags.push(geoTag);
+            }
+        }
+        return matchingGeoTags;
+    }
 }
 
 module.exports = InMemoryGeoTagStore
