@@ -42,10 +42,10 @@
                     <legend>Add a new GeoTag</legend>
 
                     <label for="tag-latitude">Latitude:</label>
-                    <input type="text" id="tag-latitude" name="latitude" value=<%= taglist[taglist.length - 1].latitude %> readonly>
+                    <input type="text" id="tag-latitude" name="latitude" value="<%= taglist[taglist.length - 1].latitude %>" readonly>
 
                     <label for="tag-longitude">Longitude:</label>
-                    <input type="text" id="tag-longitude" name="longitude" value=<%= taglist[taglist.length - 1].longitude %> readonly>
+                    <input type="text" id="tag-longitude" name="longitude" value="<%= taglist[taglist.length - 1].longitude %>" readonly>
 
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" placeholder="Enter Name" required maxlength="10">
@@ -73,8 +73,8 @@
                     <input type="text" id="searchterm" name="searchterm" placeholder="e.g. Karlsruhe">
 
                     <!-- versteckte Felder -->
-                    <input type="hidden" id="disc-latitude" name="latitude" value=<%= taglist[taglist.length - 1].latitude %> readonly>
-                    <input type="hidden" id="disc-longitude" name="longitude" value=<%= taglist[taglist.length - 1].longitude %> readonly>
+                    <input type="hidden" id="disc-latitude" name="latitude" value="<%= taglist[taglist.length - 1].latitude %>" readonly>
+                    <input type="hidden" id="disc-longitude" name="longitude" value="<%= taglist[taglist.length - 1].longitude %>" readonly>
 
                     <button type="submit">Search</button>
                 </fieldset>
@@ -91,7 +91,7 @@
                     </ul>
                 </div>
 
-                <div id="map" class="discovery__map col-8">
+                <div id="map" class="discovery__map col-8 data-tags="<%= JSON.stringify(taglist) %>">
                     <img src="./images/mapview.jpg" alt="a map with locations" id="mapView" />
                     <span id="mapDescription">Result map</span>
                 </div>
@@ -105,7 +105,9 @@
     <!-- Load JavaScripts
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="./javascripts/geotagging.js"></script>
+        <script src="./public/javascripts/geotagging.js"></script>
+        <script src="./public/javascripts/location-helper.js"></script>
+        <script src="./public/javascripts/map-manager.js"></script>
 </body>
 
 </html>
