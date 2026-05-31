@@ -202,6 +202,12 @@ img.header__image {
   margin-top: 5px;
   text-align: left;
   color: var(--gray-color);
+  
+}
+
+#map {
+  width: 100%;
+  min-height: 400px;
 }
 
 .discovery__results {

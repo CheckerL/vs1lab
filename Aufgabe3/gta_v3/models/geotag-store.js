@@ -24,6 +24,9 @@
  * - Keyword matching should include partial matches from name or hashtag fields. 
  */
 
+const GeoTagExamples = require('./geotag-examples');
+const GeoTag = require('./geotag');
+
 class InMemoryGeoTagStore{
 
     // TODO: ... your code here ...
@@ -32,7 +35,7 @@ class InMemoryGeoTagStore{
     #geoTagExamples = GeoTagExamples.tagList;
 
     constructor() {
-        addExampleGeoTags();
+        this.addExampleGeoTags();
     }
 
     addExampleGeoTags() {
@@ -42,23 +45,25 @@ class InMemoryGeoTagStore{
     }        
 
     addGeoTag(geoTag) {
-        store.push(geoTag);
+        this.#store.push(geoTag);
     }
     removeGeoTag(geoTagName) {
-        for(var geoTag of store) {
+        for(var geoTag of this.#store) {
             if(geoTag.name === geoTagName) {
-                store.splice(store.indexOf(geoTag), 1);
+                this.#store.splice(this.#store.indexOf(geoTag), 1);
             }
         }
     }
 
     getNearbyGeoTags(location, radius) {
+        var latitude = parseFloat(location.latitude);
+        var longitude = parseFloat(location.longitude);
         var nearbyGeoTags = [];
-        for(var geoTag of store) {
-            if(geoTag.latitude >= location.latitude - radius 
-                && geoTag.latitude <= location.latitude + radius
-                && geoTag.longitude >= location.longitude - radius
-                && geoTag.longitude <= location.longitude + radius) {
+        for(var geoTag of this.#store) {
+            if(geoTag.latitude >= latitude - radius 
+                && geoTag.latitude <= latitude + radius
+                && geoTag.longitude >= longitude - radius
+                && geoTag.longitude <= longitude + radius) {
                     nearbyGeoTags.push(geoTag);
             }
         }

@@ -55,9 +55,17 @@ function updateLocation() {
         }
         mapManager.updateMarkers(helper.latitude, helper.longitude, JSON.parse(document.getElementById("map").dataset.tags));
 
-        document.getElementById("mapView").remove();
-        document.getElementById("mapDescription").remove();
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
         });  
+    } else {
+        if (!mapManager) {
+            mapManager = new MapManager();
+            mapManager.initMap(currentLatitude, currentLongitude);
+        }
+        mapManager.updateMarkers(currentLatitude, currentLongitude, JSON.parse(document.getElementById("map").dataset.tags));
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
     }
     
 }
