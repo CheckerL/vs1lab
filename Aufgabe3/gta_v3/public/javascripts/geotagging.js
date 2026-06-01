@@ -56,8 +56,8 @@ function updateLocation() {
             mapManager.initMap(helper.latitude, helper.longitude);
         }
         mapManager.updateMarkers(helper.latitude, helper.longitude, tags);
-        document.getElementById("mapView").remove();
-        document.getElementById("mapDescription").remove();
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
     });
 } else {
 
@@ -66,8 +66,8 @@ function updateLocation() {
             mapManager.initMap(latValue, lonValue);
         }
         mapManager.updateMarkers(latValue, lonValue, tags);
-        document.getElementById("mapView").remove();
-        document.getElementById("mapDescription").remove();
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
 }
 }
 

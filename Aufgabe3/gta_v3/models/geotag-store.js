@@ -26,6 +26,7 @@
 
 const GeoTag = require('./geotag');
 const GeoTagExamples = require('./geotag-examples');
+const DEFAULT_RADIUS = 0.01;
 
 class InMemoryGeoTagStore{
 
@@ -48,14 +49,14 @@ class InMemoryGeoTagStore{
         this.#geoTags = this.#geoTags.filter(geoTag => geoTag.name !== name);
     }
 
-    getNearbyGeoTags(location, radius) {
+    getNearbyGeoTags(location, radius = DEFAULT_RADIUS) {
         return this.#geoTags.filter(geoTag => {
             const distance = Math.sqrt(Math.pow(geoTag.latitude - location.latitude, 2) + Math.pow(geoTag.longitude - location.longitude, 2));
             return distance <= radius;
         });
     }
 
-    searchNearbyGeoTags(location, radius, keyword) {
+    searchNearbyGeoTags(location, radius = DEFAULT_RADIUS, keyword) {
         keyword = keyword.toLowerCase();
         return this.getNearbyGeoTags(location, radius).filter(geoTag => {
             return geoTag.name.toLowerCase().includes(keyword) || geoTag.hashtag.toLowerCase().includes(keyword);
