@@ -64,7 +64,7 @@ class InMemoryGeoTagStore{
     }
 
     getIndexByGeoTag(geoTag) {
-        return this.#geoTags.findIndex(geoTag);
+        return this.#geoTags.indexOf(geoTag);
     }
     getGeoTagById(id) {
         return this.#geoTags[id];
