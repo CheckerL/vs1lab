@@ -78,7 +78,29 @@ router.post('/discovery', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.get('/api/geotags', (req, res) => {
+  const WORLD_RADIUS = 403; //For showing ALL GeoTags
+  const GERMANY_RADIUS = 7; //For showing Germanys GeoTags
+  const DEFAULT_LOCATION = {latitude: 0, longitude: 0};
+  const {latitude, longitude, searchterm} = req.query;
+  let result = [];
 
+  if(latitude !== undefined && longitude !== undefined && latitude && longitude) {
+    const location = {latitude: parseFloat(latitude), longitude: parseFloat(longitude)}; 
+    if(searchterm !== undefined) {
+      result = geoTagStore.searchNearbyGeoTags(location, undefined, searchterm);
+    } else {
+      result = geoTagStore.getNearbyGeoTags(location);
+    }
+  } else {
+    if(searchterm !== undefined) {
+      result = geoTagStore.searchNearbyGeoTags(DEFAULT_LOCATION, WORLD_RADIUS, searchterm);
+    } else {
+      result = geoTagStore.getNearbyGeoTags(DEFAULT_LOCATION, WORLD_RADIUS);
+    }
+  }
+  res.json(result);
+});
 
 /**
  * Route '/api/geotags' for HTTP 'POST' requests.
@@ -92,7 +114,16 @@ router.post('/discovery', (req, res) => {
  */
 
 // TODO: ... your code here ...
-
+router.post('/api/geotags', (req, res) => {
+  //JSON-Umwandlung üassiert schon durch express.json()
+  const newGeoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
+  geoTagStore.addGeoTag(newGeoTag);
+  const id = geoTagStore.getIndexByGeoTag(newGeoTag);
+  res
+    .status(201)
+    .location(`/api/geotags/${id}`) //<=> .location("/api/geotags/" + id)
+    .json(newGeoTag)
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'GET' requests.
@@ -105,7 +136,12 @@ router.post('/discovery', (req, res) => {
  */
 
 // TODO: ... your code here ...
-
+router.get('/api/geotags/:id', (req, res) => {
+  //10 wählt Zahlensystem aus
+  const id = parseInt(req.params.id, 10);
+  const geoTag = geoTagStore.getGeoTagById(id);
+  res.json(geoTag);
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'PUT' requests.
@@ -122,7 +158,9 @@ router.post('/discovery', (req, res) => {
  */
 
 // TODO: ... your code here ...
-
+router.put('/api/geotags/:id', (req, res) => {
+  
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'DELETE' requests.
@@ -136,5 +174,9 @@ router.post('/discovery', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.delete('/api/geotags/:id', (req, res) => {
+  
+});
+
 
 module.exports = router;

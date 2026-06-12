@@ -63,6 +63,12 @@ class InMemoryGeoTagStore{
         });
     }
 
+    getIndexByGeoTag(geoTag) {
+        return this.#geoTags.findIndex(geoTag);
+    }
+    getGeoTagById(id) {
+        return this.#geoTags[id];
+    }
 }
 
 module.exports = InMemoryGeoTagStore
