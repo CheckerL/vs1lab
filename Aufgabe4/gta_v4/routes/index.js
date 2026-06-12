@@ -159,7 +159,10 @@ router.get('/api/geotags/:id', (req, res) => {
 
 // TODO: ... your code here ...
 router.put('/api/geotags/:id', (req, res) => {
-  
+  const id = parseInt(req.params.id, 10);
+  const geoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
+  geoTagStore.putGeoTagById(id, geoTag);
+  res.json(geoTag);
 });
 
 /**
@@ -175,7 +178,10 @@ router.put('/api/geotags/:id', (req, res) => {
 
 // TODO: ... your code here ...
 router.delete('/api/geotags/:id', (req, res) => {
-  
+  const id = parseInt(req.params.id, 10);
+  const geoTag = geoTagStore.getGeoTagById(id);
+  geoTagStore.deleteGeoTagById(id);
+  res.json(geoTag);
 });
 
 

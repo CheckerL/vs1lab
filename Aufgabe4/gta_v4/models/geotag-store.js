@@ -69,6 +69,12 @@ class InMemoryGeoTagStore{
     getGeoTagById(id) {
         return this.#geoTags[id];
     }
+    putGeoTagById(id, geoTag) {
+        this.#geoTags[id] = geoTag;
+    }
+    deleteGeoTagById(id) {
+        this.#geoTags.splice(id, 1);
+    }
 }
 
 module.exports = InMemoryGeoTagStore
