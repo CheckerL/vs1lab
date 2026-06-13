@@ -74,47 +74,50 @@ async function blockAndValidateEvent(event) {
     event.preventDefault();
     const formular = event.currentTarget;
     const formElements = formular.elements;
-    
-
-    if(formular.reportValidity()) {
-        const latitude = formElements["latitude"].value;
-        const longitude = formElements["longitude"].value;
+    if(formular.reportValidity()) {   
         if(formular.id === "tag-form") {      
-            
-            const name = formElements["name"].value;
-            const hashtag = formElements["hashtag"].value;
-
-            const newGeoTag = {name, 
-                latitude: parseFloat(latitude), 
-                longitude: parseFloat(longitude), 
-                hashtag};
-            
-
-            const response = await fetch("/api/geotags", {
-                method: "POST",
-                headers: {"Content-Type": "application/json" },
-                body: JSON.stringify(newGeoTag)
-            });
-
-            await responseErrorHandling(response);
+            postNewGeoTag();
             await updateDiscovery();
-
         } else if (formular.id === "discoveryFilterForm") {
-            const searchterm = formElements["searchterm"].value;
-            const query = new URLSearchParams({
-                latitude,
-                longitude,
-                searchterm
-            });
-
-            const response = await fetch(`/api/geotags?${query.toString()}`);
-            const tags = await responseErrorHandling(response);
-            await updateDiscovery(tags);
+            await updateDiscovery();
         }
         console.log("Isch gut");
     } else {
         console.log("Isch ned so gut");
     }
+}
+
+async function postNewGeoTag() {
+    const latitude =  document.getElementById("tag-latitude").value;
+    const longitude = document.getElementById("tag-longitude").value;
+    const name = document.getElementById("name").value;
+    const hashtag = document.getElementById("hashtag").value;
+
+    const newGeoTag = {name, 
+        latitude: parseFloat(latitude), 
+        longitude: parseFloat(longitude), 
+        hashtag
+    };
+            
+    const response = await fetch("/api/geotags", {
+        method: "POST",
+        headers: {"Content-Type": "application/json" },
+        body: JSON.stringify(newGeoTag)
+    });
+    await responseErrorHandling(response);
+}
+
+async function fetchCurrentDiscoveryTags() {
+    const latitude = document.getElementById("disc-latitude").value;
+    const longitude = document.getElementById("disc-longitude").value;
+    const searchterm = document.getElementById("searchterm").value;
+    const query = new URLSearchParams({
+        latitude,
+        longitude,
+        searchterm
+    });
+    const response = await fetch(`/api/geotags?${query.toString()}`);
+    return await responseErrorHandling(response);
 }
 
 async function responseErrorHandling (response) {
@@ -126,22 +129,15 @@ async function responseErrorHandling (response) {
     return data;
 }
 
-async function updateDiscovery(givenTags) {
-    let tags;
-    if(givenTags === undefined) {
-        const response = await fetch("/api/geotags");
-        tags = await responseErrorHandling(response);
-    } else {
-        tags = givenTags;
-    }
-    
+async function updateDiscovery() {
+    const tags = await fetchCurrentDiscoveryTags();
     const latitude = document.getElementById("disc-latitude").value;
     const longitude = document.getElementById("disc-longitude").value;
     const discoveryResults = document.getElementById("discoveryResults");
     discoveryResults.textContent = "";
+    //update tags in map
     mapManager.updateMarkers(latitude, longitude, tags);
-
-
+    //Update tags in tagging list
     tags.forEach((tag) => {
         const listItem = document.createElement("li");
         listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
