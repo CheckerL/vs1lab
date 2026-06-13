@@ -29,8 +29,8 @@ const GeoTagExamples = require('./geotag-examples');
 const DEFAULT_RADIUS = 0.01;
 
 class InMemoryGeoTagStore{
-
     // TODO: ... your code here ...
+    #nextId = 0;
     constructor() {
         this.#geoTags = [];
         GeoTagExamples.tagList.forEach(tag => {
@@ -42,7 +42,10 @@ class InMemoryGeoTagStore{
     #geoTags = [];
 
     addGeoTag(geoTag) {
+        geoTag.id = this.#nextId;
         this.#geoTags.push(geoTag);
+        this.#nextId++;
+        return geoTag.id;
     }
 
     removeGeoTag(name) {
@@ -63,17 +66,21 @@ class InMemoryGeoTagStore{
         });
     }
 
-    getIndexByGeoTag(geoTag) {
-        return this.#geoTags.indexOf(geoTag);
-    }
     getGeoTagById(id) {
-        return this.#geoTags[id];
+        return this.#geoTags.find(geoTag => geoTag.id === id);
     }
     putGeoTagById(id, geoTag) {
-        this.#geoTags[id] = geoTag;
+        const index = this.#geoTags.findIndex(geoTag => geoTag.id === id);
+        if (index === -1) return undefined;
+        
+        geoTag.id = id;
+        this.#geoTags[index] = geoTag;
     }
+    
     deleteGeoTagById(id) {
-        this.#geoTags.splice(id, 1);
+        const index = this.#geoTags.findIndex(geoTag => geoTag.id === id);
+        if(index === -1) return undefined;
+        this.#geoTags.splice(index, 1);
     }
 }
 

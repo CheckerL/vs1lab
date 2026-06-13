@@ -70,11 +70,6 @@ function updateLocation() {
     }
 }
 
-
-
-
-
-
 async function blockAndValidateEvent(event) {  
     event.preventDefault();
     const formular = event.currentTarget;
@@ -102,6 +97,7 @@ async function blockAndValidateEvent(event) {
             });
 
             await responseErrorHandling(response);
+            await updateDiscovery();
 
         } else if (formular.id === "discoveryFilterForm") {
             const searchterm = formElements["searchterm"].value;
@@ -112,8 +108,8 @@ async function blockAndValidateEvent(event) {
             });
 
             const response = await fetch(`/api/geotags?${query.toString()}`);
-            await responseErrorHandling(response);
-
+            const tags = await responseErrorHandling(response);
+            await updateDiscovery(tags);
         }
         console.log("Isch gut");
     } else {
@@ -125,11 +121,36 @@ async function responseErrorHandling (response) {
     if(!response.ok) {
         throw new Error("Schade schade, das Posten von dem GeoTag hat wohl nicht geklappt :(");
     }
-
     const data = await response.json();
-
     console.log(data);
+    return data;
 }
+
+async function updateDiscovery(givenTags) {
+    let tags;
+    if(givenTags === undefined) {
+        const response = await fetch("/api/geotags");
+        tags = await responseErrorHandling(response);
+    } else {
+        tags = givenTags;
+    }
+    
+    const latitude = document.getElementById("disc-latitude").value;
+    const longitude = document.getElementById("disc-longitude").value;
+    const discoveryResults = document.getElementById("discoveryResults");
+    discoveryResults.textContent = "";
+    mapManager.updateMarkers(latitude, longitude, tags);
+
+
+    tags.forEach((tag) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
+        discoveryResults.appendChild(listItem);
+    });
+    
+}
+
+
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {

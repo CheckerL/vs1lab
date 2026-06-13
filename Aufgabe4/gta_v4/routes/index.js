@@ -88,7 +88,7 @@ router.get('/api/geotags', (req, res) => {
   if(latitude !== undefined && longitude !== undefined && latitude && longitude) {
     const location = {latitude: parseFloat(latitude), longitude: parseFloat(longitude)}; 
     if(searchterm !== undefined) {
-      result = geoTagStore.searchNearbyGeoTags(location, undefined, searchterm);
+      result = geoTagStore.searchNearbyGeoTags(location, GERMANY_RADIUS, searchterm);
     } else {
       result = geoTagStore.getNearbyGeoTags(location);
     }
@@ -117,8 +117,7 @@ router.get('/api/geotags', (req, res) => {
 router.post('/api/geotags', (req, res) => {
   //JSON-Umwandlung üassiert schon durch express.json()
   const newGeoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
-  geoTagStore.addGeoTag(newGeoTag);
-  const id = geoTagStore.getIndexByGeoTag(newGeoTag);
+  const id = geoTagStore.addGeoTag(newGeoTag);
   res
     .status(201)
     .location(`/api/geotags/${id}`) //<=> .location("/api/geotags/" + id)
