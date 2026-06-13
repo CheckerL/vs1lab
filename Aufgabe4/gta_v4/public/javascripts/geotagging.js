@@ -60,7 +60,6 @@ function updateLocation() {
         document.getElementById("mapDescription")?.remove();
     });
 } else {
-
     if (!mapManager) {
             mapManager = new MapManager();
             mapManager.initMap(latValue, lonValue);
@@ -68,12 +67,74 @@ function updateLocation() {
         mapManager.updateMarkers(latValue, lonValue, tags);
         document.getElementById("mapView")?.remove();
         document.getElementById("mapDescription")?.remove();
-}
+    }
 }
 
+
+
+
+
+
+async function blockAndValidateEvent(event) {  
+    event.preventDefault();
+    const formular = event.currentTarget;
+    const formElements = formular.elements;
+    
+
+    if(formular.reportValidity()) {
+        const latitude = formElements["latitude"].value;
+        const longitude = formElements["longitude"].value;
+        if(formular.id === "tag-form") {      
+            
+            const name = formElements["name"].value;
+            const hashtag = formElements["hashtag"].value;
+
+            const newGeoTag = {name, 
+                latitude: parseFloat(latitude), 
+                longitude: parseFloat(longitude), 
+                hashtag};
+            
+
+            const response = await fetch("/api/geotags", {
+                method: "POST",
+                headers: {"Content-Type": "application/json" },
+                body: JSON.stringify(newGeoTag)
+            });
+
+            await responseErrorHandling(response);
+
+        } else if (formular.id === "discoveryFilterForm") {
+            const searchterm = formElements["searchterm"].value;
+            const query = new URLSearchParams({
+                latitude,
+                longitude,
+                searchterm
+            });
+
+            const response = await fetch(`/api/geotags?${query.toString()}`);
+            await responseErrorHandling(response);
+
+        }
+        console.log("Isch gut");
+    } else {
+        console.log("Isch ned so gut");
+    }
+}
+
+async function responseErrorHandling (response) {
+    if(!response.ok) {
+        throw new Error("Schade schade, das Posten von dem GeoTag hat wohl nicht geklappt :(");
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+}
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
     updateLocation();
+    document.getElementById("tag-form").addEventListener("submit", blockAndValidateEvent);
+    document.getElementById("discoveryFilterForm").addEventListener("submit", blockAndValidateEvent);
     //alert("Please change the script 'geotagging.js'");
 });
