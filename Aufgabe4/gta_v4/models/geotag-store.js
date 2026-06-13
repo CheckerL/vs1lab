@@ -75,12 +75,15 @@ class InMemoryGeoTagStore{
         
         geoTag.id = id;
         this.#geoTags[index] = geoTag;
+        return geoTag;
     }
     
     deleteGeoTagById(id) {
         const index = this.#geoTags.findIndex(geoTag => geoTag.id === id);
         if(index === -1) return undefined;
+        const deletedGeoTag = this.#geoTags[index];
         this.#geoTags.splice(index, 1);
+        return deletedGeoTag;
     }
 }
 

@@ -138,7 +138,17 @@ router.post('/api/geotags', (req, res) => {
 router.get('/api/geotags/:id', (req, res) => {
   //10 wählt Zahlensystem aus
   const id = parseInt(req.params.id, 10);
+
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
+
   const geoTag = geoTagStore.getGeoTagById(id);
+
+  if(geoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
+
   res.json(geoTag);
 });
 
@@ -159,7 +169,15 @@ router.get('/api/geotags/:id', (req, res) => {
 // TODO: ... your code here ...
 router.put('/api/geotags/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
   const geoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
+
+  if(geoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
+
   geoTagStore.putGeoTagById(id, geoTag);
   res.json(geoTag);
 });
@@ -178,7 +196,13 @@ router.put('/api/geotags/:id', (req, res) => {
 // TODO: ... your code here ...
 router.delete('/api/geotags/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
   const geoTag = geoTagStore.getGeoTagById(id);
+  if(geoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
   geoTagStore.deleteGeoTagById(id);
   res.json(geoTag);
 });
