@@ -63,6 +63,7 @@ function updateLocation() {
         mapManager.updateMarkers(helper.latitude, helper.longitude, tags);
         document.getElementById("mapView")?.remove();
         document.getElementById("mapDescription")?.remove();
+        updateDiscovery();
     });
 } else {
     if (!mapManager) {
@@ -72,7 +73,9 @@ function updateLocation() {
         mapManager.updateMarkers(latValue, lonValue, tags);
         document.getElementById("mapView")?.remove();
         document.getElementById("mapDescription")?.remove();
+        updateDiscovery();
     }
+   
 }
 
 async function blockAndValidateEvent(event) {  
