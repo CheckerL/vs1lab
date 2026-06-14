@@ -82,7 +82,30 @@ router.get('/api/geotags', (req, res) => {
   const WORLD_RADIUS = 403; //For showing ALL GeoTags
   const GERMANY_RADIUS = 7; //For showing Germanys GeoTags
   const DEFAULT_LOCATION = {latitude: 0, longitude: 0};
+  //Sehr hoher Wert damit Pflichtaufgabe besser in Labor präsentierbar ist
+  const DEFAULT_LIMIT = 10000;
+  //Entsprechend: 
+  const DEFAULT_PAGE = 1;
   const {latitude, longitude, searchterm} = req.query;
+
+  let page = parseInt(req.query.page, 10);
+  let limit = parseInt(req.query.limit, 10);
+
+  if(Number.isNaN(page)) {
+    page = DEFAULT_PAGE;
+  } 
+
+  if(Number.isNaN(limit)) {
+    limit = DEFAULT_LIMIT;
+  }
+
+  if(page < 1 || limit < 1) {
+    return res
+              .status(400)
+              .json({error: "Da hat wohl jemand bei den Seiten oder dem Limit zu tief gestapelt." 
+                + "\n Komm schon, trau Dir mehr zu!"});
+  }
+
   let result = [];
 
   if(latitude !== undefined && longitude !== undefined && latitude && longitude) {
@@ -99,7 +122,33 @@ router.get('/api/geotags', (req, res) => {
       result = geoTagStore.getNearbyGeoTags(DEFAULT_LOCATION, WORLD_RADIUS);
     }
   }
-  res.json(result);
+
+  if(result.length === 0) {
+    return res.json([]);
+  }
+
+  const pageCount = Math.ceil(result.length / limit);
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  if(page > pageCount) {
+    return res
+      .status(400)
+      .json({error: "Du hast Dich wohl im Buch geirrt, die Seite gibt es wohl nicht :("});
+  }
+
+  const pagedResult = result.slice(startIndex, endIndex);
+
+  //Lösung ohne Pagination
+  //res.json(result);
+
+  //Lösung mit Pagination
+  res.json({
+    page,
+    limt,
+    pageCount,
+    tagCount: result.length,
+    geoTags: pagedResult
+  });
 });
 
 /**
@@ -115,7 +164,7 @@ router.get('/api/geotags', (req, res) => {
 
 // TODO: ... your code here ...
 router.post('/api/geotags', (req, res) => {
-  //JSON-Umwandlung üassiert schon durch express.json()
+  //JSON-Umwandlung passiert schon durch express.json()
   const newGeoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
   const id = geoTagStore.addGeoTag(newGeoTag);
   res
@@ -206,6 +255,7 @@ router.delete('/api/geotags/:id', (req, res) => {
   geoTagStore.deleteGeoTagById(id);
   res.json(geoTag);
 });
+
 
 
 module.exports = router;
