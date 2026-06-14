@@ -84,9 +84,10 @@ async function blockAndValidateEvent(event) {
     const formElements = formular.elements;
     if(formular.reportValidity()) {   
         if(formular.id === "tag-form") {      
-            postNewGeoTag();
+            await postNewGeoTag();
             await updateDiscovery();
         } else if (formular.id === "discoveryFilterForm") {
+            page = 1;
             await updateDiscovery();
         }
         console.log("Isch gut");

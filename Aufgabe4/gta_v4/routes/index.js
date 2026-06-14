@@ -233,7 +233,9 @@ router.put('/api/geotags/:id', (req, res) => {
   }
   const geoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
 
-  if(geoTag === undefined) {
+  const unchangedGeoTag = geoTagStore.getGeoTagById(id);
+
+  if(geoTag === undefined || unchangedGeoTag === undefined) {
     return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
   }
 

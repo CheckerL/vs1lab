@@ -61,6 +61,17 @@ Content-Type: application/json
     "hashtag": "#besserCastle"
 }
 
+###Nicht vorhandenes GeoTag ändern 
+PUT http://localhost:3000/api/geotags/50
+Content-Type: application/json
+
+{
+    "name": "BruchsalerCastle",
+    "latitude": 49.1287,
+    "longitude": 8.5988,
+    "hashtag": "#besserCastle"
+}
+
 ###Alle GeoTags anzeigen
 GET http://localhost:3000/api/geotags
 
