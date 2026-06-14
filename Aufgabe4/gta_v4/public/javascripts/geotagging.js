@@ -158,10 +158,26 @@ async function updateDiscovery() {
         listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
         discoveryResults.appendChild(listItem);
     });
-    
+
     pageNavigationInfo.textContent = ` ${page}/${pageCount} (${tagCount}) `;
 
     maxPage = pageCount;
+
+    if(page === 1) {
+        document.getElementById("previous-page").style.opacity = "0.4";
+        document.getElementById("previous-page").disabled = true;
+    } else {
+        document.getElementById("previous-page").style.opacity = "1.0";
+        document.getElementById("previous-page").disabled = false;
+    }
+    if(page === pageCount) {
+        document.getElementById("next-page").style.opacity = "0,4";
+        document.getElementById("next-page").disabled = true;
+    } else {
+        document.getElementById("next-page").style.opacity = "1.0";
+        document.getElementById("next-page").disabled = false;
+    }
+
 }
 
 async function previousPageHandler(event) {

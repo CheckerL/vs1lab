@@ -78,12 +78,15 @@ fieldset {
   display:flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.05rem;
+  justify-content: center;
+  gap: 0.2rem;
 }
 
 
 .page__button {
-  scale: 0.65;
+  width: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* Grid styles (no changes required) */
