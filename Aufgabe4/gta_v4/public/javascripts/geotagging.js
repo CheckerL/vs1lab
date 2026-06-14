@@ -9,6 +9,11 @@
 // Try to find this output in the browser...
 console.log("The geoTagging script is going to start...");
 
+
+const limit = 5; 
+let page = 1;
+let maxPage = 1;
+
 // Here the API used for geolocations is selected
 // The following declaration is a 'mockup' that always works and returns a fixed position.
 var GEOLOCATION_API = {
@@ -112,6 +117,8 @@ async function fetchCurrentDiscoveryTags() {
     const longitude = document.getElementById("disc-longitude").value;
     const searchterm = document.getElementById("searchterm").value;
     const query = new URLSearchParams({
+        page,
+        limit,
         latitude,
         longitude,
         searchterm
@@ -126,29 +133,59 @@ async function responseErrorHandling (response) {
     }
     const data = await response.json();
     console.log(data);
-    return data.geoTags;
+    return data;
 }
 
 async function updateDiscovery() {
-    const tags = await fetchCurrentDiscoveryTags();
+    const data = await fetchCurrentDiscoveryTags();
+    const page = data.page;
+    const pageCount = data.pageCount;
+    const tagCount = data.tagCount;
+    const tags = data.geoTags;
+
     const latitude = document.getElementById("disc-latitude").value;
     const longitude = document.getElementById("disc-longitude").value;
     const discoveryResults = document.getElementById("discoveryResults");
+    const pageNavigationInfo = document.getElementById("page-info");
+
     discoveryResults.textContent = "";
     //update tags in map
     mapManager.updateMarkers(latitude, longitude, tags);
     //Update tags in tagging list
+    
     tags.forEach((tag) => {
         const listItem = document.createElement("li");
         listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
         discoveryResults.appendChild(listItem);
     });
+    
+    pageNavigationInfo.textContent = ` ${page}/${pageCount} (${tagCount}) `;
+
+    maxPage = pageCount;
 }
+
+async function previousPageHandler(event) {
+    if(page > 1) {
+        page--;
+        await updateDiscovery();
+    }
+}
+
+async function nextPageHandler(event) {
+    if(page != maxPage) {
+        page++;
+        await updateDiscovery();
+    }
+}
+
+
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
     updateLocation();
     document.getElementById("tag-form").addEventListener("submit", blockAndValidateEvent);
     document.getElementById("discoveryFilterForm").addEventListener("submit", blockAndValidateEvent);
+    document.getElementById("previous-page").addEventListener("click", previousPageHandler);
+    document.getElementById("next-page").addEventListener("click", nextPageHandler);
     //alert("Please change the script 'geotagging.js'");
 });

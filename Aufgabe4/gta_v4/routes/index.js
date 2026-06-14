@@ -123,8 +123,18 @@ router.get('/api/geotags', (req, res) => {
     }
   }
 
+  
+
   if(result.length === 0) {
-    return res.json([]);
+    page = 1;
+    const pageCount = 1;
+    return res.json({
+      page,
+      limit,
+      pageCount,
+      tagCount: result.length,
+      geoTags: []
+    });
   }
 
   const pageCount = Math.ceil(result.length / limit);
