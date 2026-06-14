@@ -144,7 +144,7 @@ router.get('/api/geotags', (req, res) => {
   //Lösung mit Pagination
   res.json({
     page,
-    limt,
+    limit,
     pageCount,
     tagCount: result.length,
     geoTags: pagedResult

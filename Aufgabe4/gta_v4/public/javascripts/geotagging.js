@@ -126,7 +126,7 @@ async function responseErrorHandling (response) {
     }
     const data = await response.json();
     console.log(data);
-    return data;
+    return data.geoTags;
 }
 
 async function updateDiscovery() {
