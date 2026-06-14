@@ -143,10 +143,7 @@ async function updateDiscovery() {
         listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
         discoveryResults.appendChild(listItem);
     });
-    
 }
-
-
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
