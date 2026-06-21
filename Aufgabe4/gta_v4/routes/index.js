@@ -26,7 +26,7 @@ const GeoTag = require('../models/geotag');
  */
 // eslint-disable-next-line no-unused-vars
 const GeoTagStore = require('../models/geotag-store');
-
+const geoTagStore = new GeoTagStore();
 // App routes (A3)
 
 /**
@@ -39,7 +39,28 @@ const GeoTagStore = require('../models/geotag-store');
  */
 
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+  res.render('index', { taglist: [], latitude: '', longitude: '' });
+});
+
+router.post('/tagging', (req, res) => {
+  const {name, latitude, longitude, hashtag} = req.body;
+  const newGeoTag = new GeoTag(name, latitude, longitude, hashtag);
+  geoTagStore.addGeoTag(newGeoTag);
+  const location = {latitude, longitude};
+  const nearbyGeoTags = geoTagStore.getNearbyGeoTags(location, 10);
+  res.render('index', {taglist: nearbyGeoTags, latitude: latitude, longitude: longitude});
+});
+
+router.post('/discovery', (req, res) => {
+    const {latitude, longitude, searchterm} = req.body;
+    const location = {latitude, longitude};
+    let nearbyGeoTags;
+    if (searchterm) {
+        nearbyGeoTags = geoTagStore.searchNearbyGeoTags(location, 10, searchterm);
+    } else {
+        nearbyGeoTags = geoTagStore.getNearbyGeoTags(location, 10);
+    }
+    res.render('index', {taglist: nearbyGeoTags, latitude: latitude, longitude: longitude});
 });
 
 // API routes (A4)
@@ -57,7 +78,88 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.get('/api/geotags', (req, res) => {
+  const WORLD_RADIUS = 403; //For showing ALL GeoTags
+  const GERMANY_RADIUS = 7; //For showing Germanys GeoTags
+  const DEFAULT_LOCATION = {latitude: 0, longitude: 0};
+  //Sehr hoher Wert damit Pflichtaufgabe besser in Labor präsentierbar ist
+  const DEFAULT_LIMIT = 10000;
+  //Entsprechend: 
+  const DEFAULT_PAGE = 1;
+  const {latitude, longitude, searchterm} = req.query;
 
+  let page = parseInt(req.query.page, 10);
+  let limit = parseInt(req.query.limit, 10);
+
+  if(Number.isNaN(page)) {
+    page = DEFAULT_PAGE;
+  } 
+
+  if(Number.isNaN(limit)) {
+    limit = DEFAULT_LIMIT;
+  }
+
+  if(page < 1 || limit < 1) {
+    return res
+              .status(400)
+              .json({error: "Da hat wohl jemand bei den Seiten oder dem Limit zu tief gestapelt." 
+                + "\n Komm schon, trau Dir mehr zu!"});
+  }
+
+  let result = [];
+
+  if(latitude !== undefined && longitude !== undefined && latitude && longitude) {
+    const location = {latitude: parseFloat(latitude), longitude: parseFloat(longitude)}; 
+    if(searchterm !== undefined) {
+      result = geoTagStore.searchNearbyGeoTags(location, GERMANY_RADIUS, searchterm);
+    } else {
+      result = geoTagStore.getNearbyGeoTags(location);
+    }
+  } else {
+    if(searchterm !== undefined) {
+      result = geoTagStore.searchNearbyGeoTags(DEFAULT_LOCATION, WORLD_RADIUS, searchterm);
+    } else {
+      result = geoTagStore.getNearbyGeoTags(DEFAULT_LOCATION, WORLD_RADIUS);
+    }
+  }
+
+  
+
+  if(result.length === 0) {
+    page = 1;
+    const pageCount = 1;
+    return res.json({
+      page,
+      limit,
+      pageCount,
+      tagCount: result.length,
+      geoTags: []
+    });
+  }
+
+  const pageCount = Math.ceil(result.length / limit);
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  if(page > pageCount) {
+    return res
+      .status(400)
+      .json({error: "Du hast Dich wohl im Buch geirrt, die Seite gibt es wohl nicht :("});
+  }
+
+  const pagedResult = result.slice(startIndex, endIndex);
+
+  //Lösung ohne Pagination
+  //res.json(result);
+
+  //Lösung mit Pagination
+  res.json({
+    page,
+    limit,
+    pageCount,
+    tagCount: result.length,
+    geoTags: pagedResult
+  });
+});
 
 /**
  * Route '/api/geotags' for HTTP 'POST' requests.
@@ -71,7 +173,15 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
-
+router.post('/api/geotags', (req, res) => {
+  //JSON-Umwandlung passiert schon durch express.json()
+  const newGeoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
+  const id = geoTagStore.addGeoTag(newGeoTag);
+  res
+    .status(201)
+    .location(`/api/geotags/${id}`) //<=> .location("/api/geotags/" + id)
+    .json(newGeoTag)
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'GET' requests.
@@ -84,7 +194,22 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.get('/api/geotags/:id', (req, res) => {
+  //10 wählt Zahlensystem aus
+  const id = parseInt(req.params.id, 10);
 
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
+
+  const geoTag = geoTagStore.getGeoTagById(id);
+
+  if(geoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
+
+  res.json(geoTag);
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'PUT' requests.
@@ -101,7 +226,22 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.put('/api/geotags/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
+  const geoTag = new GeoTag(req.body.name, req.body.latitude, req.body.longitude, req.body.hashtag);
 
+  const unchangedGeoTag = geoTagStore.getGeoTagById(id);
+
+  if(geoTag === undefined || unchangedGeoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
+
+  geoTagStore.putGeoTagById(id, geoTag);
+  res.json(geoTag);
+});
 
 /**
  * Route '/api/geotags/:id' for HTTP 'DELETE' requests.
@@ -115,5 +255,19 @@ router.get('/', (req, res) => {
  */
 
 // TODO: ... your code here ...
+router.delete('/api/geotags/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if(!Number.isInteger(id) || id < 0) {
+    return res.status(400).json({error: "Upsidupsidu, da war wohl die ID falsch"});
+  }
+  const geoTag = geoTagStore.getGeoTagById(id);
+  if(geoTag === undefined) {
+    return res.status(404).json({error: "Schwupsidupsidu, den (Geo)Tag gibts wohl nicht, probiere es doch mal mit 'Sonntag'"});
+  }
+  geoTagStore.deleteGeoTagById(id);
+  res.json(geoTag);
+});
+
+
 
 module.exports = router;

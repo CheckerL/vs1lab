@@ -1,0 +1,211 @@
+// File origin: VS1LAB A2
+
+/* eslint-disable no-unused-vars */
+
+// This script is executed when the browser loads index.html.
+
+// "console.log" writes to the browser's console. 
+// The console window must be opened explicitly in the browser.
+// Try to find this output in the browser...
+console.log("The geoTagging script is going to start...");
+
+
+const limit = 5; 
+let page = 1;
+let maxPage = 1;
+
+// Here the API used for geolocations is selected
+// The following declaration is a 'mockup' that always works and returns a fixed position.
+var GEOLOCATION_API = {
+    getCurrentPosition: function(onsuccess) {
+        onsuccess({
+            "coords": {
+                "latitude": 49.013790,
+                "longitude": 8.390071,
+                "altitude": null,
+                "accuracy": 39,
+                "altitudeAccuracy": null,
+                "heading": null,
+                "speed": null
+            },
+            "timestamp": 1775140116396
+        });
+    }
+};
+
+// This is the real API.
+// If there are problems with it, comment out the line.
+GEOLOCATION_API = navigator.geolocation;
+
+/**
+ * TODO: 'updateLocation'
+ * A function to retrieve the current location and update the page.
+ * It is called once the page has been fully loaded.
+ */
+// ... your code here ...
+let mapManager;
+function updateLocation() {
+    const latValue = document.getElementById("disc-latitude").value;
+    const lonValue = document.getElementById("disc-longitude").value;
+    const tags = JSON.parse(document.getElementById("map").dataset.tags);
+
+    if (latValue === "" || lonValue === "") {
+        LocationHelper.findLocation((helper) => {
+        document.getElementById("tag-latitude").value = helper.latitude;
+        document.getElementById("tag-longitude").value = helper.longitude;
+        document.getElementById("disc-latitude").value = helper.latitude;
+        document.getElementById("disc-longitude").value = helper.longitude;
+
+        if (!mapManager) {
+            mapManager = new MapManager();
+            mapManager.initMap(helper.latitude, helper.longitude);
+        }
+        mapManager.updateMarkers(helper.latitude, helper.longitude, tags);
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
+        updateDiscovery();
+    });
+} else {
+    if (!mapManager) {
+            mapManager = new MapManager();
+            mapManager.initMap(latValue, lonValue);
+        }
+        mapManager.updateMarkers(latValue, lonValue, tags);
+        document.getElementById("mapView")?.remove();
+        document.getElementById("mapDescription")?.remove();
+        updateDiscovery();
+    }
+   
+}
+
+async function blockAndValidateEvent(event) {  
+    event.preventDefault();
+    const formular = event.currentTarget;
+    const formElements = formular.elements;
+    if(formular.reportValidity()) {   
+        if(formular.id === "tag-form") {      
+            await postNewGeoTag();
+            await updateDiscovery();
+        } else if (formular.id === "discoveryFilterForm") {
+            page = 1;
+            await updateDiscovery();
+        }
+        console.log("Isch gut");
+    } else {
+        console.log("Isch ned so gut");
+    }
+}
+
+async function postNewGeoTag() {
+    const latitude =  document.getElementById("tag-latitude").value;
+    const longitude = document.getElementById("tag-longitude").value;
+    const name = document.getElementById("name").value;
+    const hashtag = document.getElementById("hashtag").value;
+
+    const newGeoTag = {name, 
+        latitude: parseFloat(latitude), 
+        longitude: parseFloat(longitude), 
+        hashtag
+    };
+            
+    const response = await fetch("/api/geotags", {
+        method: "POST",
+        headers: {"Content-Type": "application/json" },
+        body: JSON.stringify(newGeoTag)
+    });
+    await responseErrorHandling(response);
+}
+
+async function fetchCurrentDiscoveryTags() {
+    const latitude = document.getElementById("disc-latitude").value;
+    const longitude = document.getElementById("disc-longitude").value;
+    const searchterm = document.getElementById("searchterm").value;
+    const query = new URLSearchParams({
+        page,
+        limit,
+        latitude,
+        longitude,
+        searchterm
+    });
+    const response = await fetch(`/api/geotags?${query.toString()}`);
+    return await responseErrorHandling(response);
+}
+
+async function responseErrorHandling (response) {
+    if(!response.ok) {
+        throw new Error("Schade schade, das Posten von dem GeoTag hat wohl nicht geklappt :(");
+    }
+    const data = await response.json();
+    console.log(data);
+    return data;
+}
+
+async function updateDiscovery() {
+    const data = await fetchCurrentDiscoveryTags();
+    const page = data.page;
+    const pageCount = data.pageCount;
+    const tagCount = data.tagCount;
+    const tags = data.geoTags;
+
+    const latitude = document.getElementById("disc-latitude").value;
+    const longitude = document.getElementById("disc-longitude").value;
+    const discoveryResults = document.getElementById("discoveryResults");
+    const pageNavigationInfo = document.getElementById("page-info");
+
+    discoveryResults.textContent = "";
+    //update tags in map
+    mapManager.updateMarkers(latitude, longitude, tags);
+    //Update tags in tagging list
+    
+    tags.forEach((tag) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = ` ${tag.name} (  ${tag.latitude} , ${tag.longitude} )  ${tag.hashtag}  `;
+        discoveryResults.appendChild(listItem);
+    });
+
+    pageNavigationInfo.textContent = ` ${page}/${pageCount} (${tagCount}) `;
+
+    maxPage = pageCount;
+
+    if(page === 1) {
+        document.getElementById("previous-page").style.opacity = "0.4";
+        document.getElementById("previous-page").disabled = true;
+    } else {
+        document.getElementById("previous-page").style.opacity = "1.0";
+        document.getElementById("previous-page").disabled = false;
+    }
+    if(page === pageCount) {
+        document.getElementById("next-page").style.opacity = "0,4";
+        document.getElementById("next-page").disabled = true;
+    } else {
+        document.getElementById("next-page").style.opacity = "1.0";
+        document.getElementById("next-page").disabled = false;
+    }
+
+}
+
+async function previousPageHandler(event) {
+    if(page > 1) {
+        page--;
+        await updateDiscovery();
+    }
+}
+
+async function nextPageHandler(event) {
+    if(page != maxPage) {
+        page++;
+        await updateDiscovery();
+    }
+}
+
+
+
+// Wait for the page to fully load its DOM content, then call updateLocation
+document.addEventListener("DOMContentLoaded", () => {
+    updateLocation();
+    document.getElementById("tag-form").addEventListener("submit", blockAndValidateEvent);
+    document.getElementById("discoveryFilterForm").addEventListener("submit", blockAndValidateEvent);
+    document.getElementById("previous-page").addEventListener("click", previousPageHandler);
+    document.getElementById("next-page").addEventListener("click", nextPageHandler);
+    //alert("Please change the script 'geotagging.js'");
+});

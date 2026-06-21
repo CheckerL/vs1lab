@@ -1,0 +1,82 @@
+###Alle GeoTags anzeigen
+GET http://localhost:3000/api/geotags
+
+### GeoTag mit ID 1 anzeigen
+GET http://localhost:3000/api/geotags/1
+
+### Lebenszyklus - Beginn - GeoTag Stage76 hinzufügen
+POST http://localhost:3000/api/geotags
+Content-Type: application/json
+
+{
+    "name": "Stage76",
+    "latitude": 49.12327,
+    "longitude": 8.58697,
+    "hashtag": "#stage76" 
+}
+
+###Neues Tag anzeigen
+GET http://localhost:3000/api/geotags/11
+
+###Alle GeoTags anzeigen
+GET http://localhost:3000/api/geotags
+
+###Neues Stage Tag ändern
+PUT http://localhost:3000/api/geotags/11
+Content-Type: application/json
+
+{
+    "name": "Lukas' Wohnung",
+    "latitude": 49.12327,
+    "longitude": 8.58697,
+    "hashtag": "#stage76"
+}
+
+###Gebe verändertes GeoTag aus
+GET http://localhost:3000/api/geotags/11
+
+###Alle GeoTags anzeigen
+GET http://localhost:3000/api/geotags
+
+###Gebe alle Tags mit searchterm stage aus
+GET http://localhost:3000/api/geotags/?latitude=49.12327&longitude=8.58697&searchterm=stage
+
+###Lösche hinzugefügtes GeoTag -Lebenszyklus Ende
+DELETE http://localhost:3000/api/geotags/11
+
+###Probiere GeoTag mit id 11 auszugeben
+GET http://localhost:3000/api/geotags/11
+
+###Alle GeoTags anzeigen
+GET http://localhost:3000/api/geotags
+
+###Karlsruher Schloss ändern 
+PUT http://localhost:3000/api/geotags/0
+Content-Type: application/json
+
+{
+    "name": "BruchsalerCastle",
+    "latitude": 49.1287,
+    "longitude": 8.5988,
+    "hashtag": "#besserCastle"
+}
+
+###Nicht vorhandenes GeoTag ändern 
+PUT http://localhost:3000/api/geotags/50
+Content-Type: application/json
+
+{
+    "name": "BruchsalerCastle",
+    "latitude": 49.1287,
+    "longitude": 8.5988,
+    "hashtag": "#besserCastle"
+}
+
+###Alle GeoTags anzeigen
+GET http://localhost:3000/api/geotags
+
+###
+DELETE http://localhost:3000/api/geotags/1
+
+###Alle GeoTags anzeigen.
+GET http://localhost:3000/api/geotags

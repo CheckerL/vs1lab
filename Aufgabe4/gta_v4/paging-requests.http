@@ -1,0 +1,6 @@
+###Mit Default-Werten ausgeben
+GET http://localhost:3000/api/geotags?latitude=49.12327&longitude=8.58697&searchterm=#campus
+###Mit vordefinierten page=2 und limit=5
+GET http://localhost:3000/api/geotags?page=2&limit=5&latitude=49.12327&longitude=8.58697&searchterm=#campus
+###Reiner Default get
+GET http://localhost:3000/api/geotags
